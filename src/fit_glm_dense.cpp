@@ -63,6 +63,7 @@ List fastglm(Rcpp::NumericMatrix Xs,
     
     VectorXd beta      = glm_solver->get_beta();
     VectorXd se        = glm_solver->get_se();
+    MatrixXd vcov      = glm_solver->get_vcov();
     VectorXd mu        = glm_solver->get_mu();
     VectorXd eta       = glm_solver->get_eta();
     VectorXd wts       = glm_solver->get_w();
@@ -78,6 +79,7 @@ List fastglm(Rcpp::NumericMatrix Xs,
     
     return List::create(_["coefficients"]      = beta,
                         _["se"]                = se,
+                        _["vcov"]              = vcov,
                         _["fitted.values"]     = mu,
                         _["linear.predictors"] = eta,
                         _["deviance"]          = dev,
@@ -168,6 +170,7 @@ List bigfastglm(XPtr<BigMatrix> Xs,
     
     VectorXd beta      = glm_solver->get_beta();
     VectorXd se        = glm_solver->get_se();
+    MatrixXd vcov      = glm_solver->get_vcov();
     VectorXd mu        = glm_solver->get_mu();
     VectorXd eta       = glm_solver->get_eta();
     VectorXd wts       = glm_solver->get_w();

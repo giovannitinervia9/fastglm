@@ -471,6 +471,52 @@ protected:
         }
         
     }
+
+    virtual void save_vcov()
+    {
+        
+        if (type == 0)
+        {
+            if (rank == nvars) 
+            {	// full rank case
+                vcov = Pmat * PQR.matrixQR().topRows(nvars).
+                    triangularView<Upper>().solve(MatrixXd::Identity(nvars, nvars));
+                return;
+            } else 
+            {
+                // create fitted values from effects
+                // (can't use X*m_coef if X is rank-deficient)
+                vcov = Rinv.rowwise().norm();
+            }
+        } else if (type == 1)
+        {
+            vcov = QR.matrixQR().topRows(nvars).
+                triangularView<Upper>().solve(MatrixXd::Identity(nvars, nvars));
+        } else if (type == 2)
+        {
+            vcov = Ch.matrixL().solve(MatrixXd::Identity(nvars, nvars));
+        } else if (type == 3)
+        {
+            vcov = ChD.solve(MatrixXd::Identity(nvars, nvars));
+        } else if (type == 4)
+        {
+            if (rank == nvars) 
+            {	// full rank case
+                vcov = Pmat * FPQR.matrixQR().topRows(nvars).
+                    triangularView<Upper>().solve(MatrixXd::Identity(nvars, nvars));
+                return;
+            } else 
+            {
+                // create fitted values from effects
+                // (can't use X*m_coef if X is rank-deficient)
+                vcov = Rinv;
+            }
+        } else if (type == 5)
+        {
+            vcov = (bSVD.solve(MatrixXd::Identity(nvars, nvars)));
+        }
+        
+    }
     
 
 

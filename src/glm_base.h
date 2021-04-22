@@ -108,6 +108,11 @@ protected:
         
     }
 
+    virtual void save_vcov()
+    {
+        
+    }
+
     
 public:
     GlmBase(int n_, int p_,
@@ -183,6 +188,7 @@ public:
         }
         
         save_se();
+        save_vcov();
         
         return std::min(i + 1, maxit);
     }

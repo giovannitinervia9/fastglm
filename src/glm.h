@@ -479,6 +479,8 @@ protected:
         {
             if (rank == nvars) 
             {	// full rank case
+                // vcov = Pmat * PQR.matrixQR().topRows(nvars).
+                //     triangularView<Upper>().solve(MatrixXd::Identity(nvars, nvars));
                 vcov = Pmat * PQR.matrixQR().topRows(nvars).
                     triangularView<Upper>().solve(MatrixXd::Identity(nvars, nvars));
                 return;
@@ -486,15 +488,18 @@ protected:
             {
                 // create fitted values from effects
                 // (can't use X*m_coef if X is rank-deficient)
-                vcov = Rinv.rowwise().norm();
+                vcov = Rinv;
             }
         } else if (type == 1)
         {
-            vcov = QR.matrixQR().topRows(nvars).
-                triangularView<Upper>().solve(MatrixXd::Identity(nvars, nvars));
+             // vcov = QR.matrixQR().topRows(nvars).
+             //     triangularView<Upper>().solve(MatrixXd::Identity(nvars, nvars));
+             vcov = QR.matrixQR().topRows(nvars).
+                 triangularView<Upper>().solve(MatrixXd::Identity(nvars, nvars));
         } else if (type == 2)
         {
-            vcov = Ch.matrixL().solve(MatrixXd::Identity(nvars, nvars));
+            // vcov = Ch.matrixL().solve(MatrixXd::Identity(nvars, nvars));
+            vcov = Ch.solve(MatrixXd::Identity(nvars, nvars));
         } else if (type == 3)
         {
             vcov = ChD.solve(MatrixXd::Identity(nvars, nvars));
@@ -502,6 +507,8 @@ protected:
         {
             if (rank == nvars) 
             {	// full rank case
+                // vcov = Pmat * FPQR.matrixQR().topRows(nvars).
+                //     triangularView<Upper>().solve(MatrixXd::Identity(nvars, nvars));
                 vcov = Pmat * FPQR.matrixQR().topRows(nvars).
                     triangularView<Upper>().solve(MatrixXd::Identity(nvars, nvars));
                 return;
@@ -513,7 +520,7 @@ protected:
             }
         } else if (type == 5)
         {
-            vcov = (bSVD.solve(MatrixXd::Identity(nvars, nvars)));
+            vcov = bSVD.solve(MatrixXd::Identity(nvars, nvars));
         }
         
     }

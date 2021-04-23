@@ -159,6 +159,20 @@ residuals.fastglm <- function(object,
 }
 
 
+#' vcov method for fastglm fitted objects
+#'
+#' @param object fastglm fitted object
+#' @param ... not used
+#' @return the covariance matrix
+#' @rdname vcov
+#' @method vcov fastglm
+#' @export
+vcov.fastglm <- function(object, ...)
+{
+    object$vcov
+}
+
+
 
 #' logLik method for fastglm fitted objects
 #'

@@ -527,7 +527,7 @@ protected:
                 // Rank-deficient
 		vcov = MatrixXd::Zero(nvars, nvars);
 		vcov.topLeftCorner(rank, rank) = Rinv
-		    * MatrixXd(PQR.matrixQ()).topRows(rank).transpose();
+		    * MatrixXd(FPQR.matrixQ()).topRows(rank).transpose();
                 vcov = Pmat * vcov;
             }
         } else if (type == 5)

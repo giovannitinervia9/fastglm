@@ -27,7 +27,7 @@ protected:
     VecTypeX mu;
     VecTypeX z;
     VecTypeX w;
-    MatTypeX vcov;
+    MatTypeX XXinv;
     VecTypeX se;
     double dev, devold, devnull;
     
@@ -108,7 +108,7 @@ protected:
         
     }
 
-    virtual void save_vcov()
+    virtual void save_XXinv()
     {
         
     }
@@ -127,7 +127,7 @@ public:
     mu(n_),
     z(n_),
     w(n_),
-    vcov(p_, p_),
+    XXinv(p_, p_),
     se(p_),
     maxit(maxit_),
     tol(tol_)
@@ -188,7 +188,7 @@ public:
         }
         
         save_se();
-        save_vcov();
+        save_XXinv();
         
         return std::min(i + 1, maxit);
     }
@@ -201,7 +201,7 @@ public:
     virtual VecTypeX get_w()        { return w.array().square(); }
     virtual double get_dev()        { return dev; }
     virtual int get_rank()          { return nvars; }
-    virtual MatTypeX get_vcov()     { return vcov; }
+    virtual MatTypeX get_XXinv()    { return XXinv; }
     virtual bool get_converged()    { return conv; }
     
 };

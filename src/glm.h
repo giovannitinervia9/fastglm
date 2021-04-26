@@ -472,9 +472,9 @@ protected:
 
     }
 
-    virtual void save_vcov()
+    virtual void save_XXinv()
     {
-
+	// Get (X^T * X)^(-1) depending on method
         if (type == 0)
         {
             if (rank == nvars)
@@ -482,34 +482,34 @@ protected:
 		// Full rank
                 // Inverse based on pivoted QR decomposition,
 		// A^(-1) = P * R^(-1) * Q^T
-                vcov = Pmat
+                XXinv = Pmat
 		    * PQR.matrixQR().topRows(nvars).triangularView<Upper>().
 		    solve(MatrixXd::Identity(nvars, nvars))
 		    * MatrixXd(PQR.householderQ()).topRows(nvars).transpose();
             } else
             {
 		// Rank-deficient
-		vcov = MatrixXd::Zero(nvars, nvars);
-		vcov.topLeftCorner(rank, rank) = Rinv
+		XXinv = MatrixXd::Zero(nvars, nvars);
+		XXinv.topLeftCorner(rank, rank) = Rinv
 		    * MatrixXd(PQR.householderQ()).topRows(rank).transpose();
-                vcov = Pmat * vcov;
+                XXinv = Pmat * XXinv;
             }
         } else if (type == 1)
         {
 	    // Inverse based on QR decomposition, A^(-1) = R^(-1) * Q^T
-	    vcov = QR.matrixQR().topRows(nvars).triangularView<Upper>().
+	    XXinv = QR.matrixQR().topRows(nvars).triangularView<Upper>().
 		solve(MatrixXd::Identity(nvars, nvars))
 		* MatrixXd(QR.householderQ()).topRows(nvars).transpose();
         } else if (type == 2)
         {
 	    // Inverse based on Cholesky decomposition, A^(-1) = L^T * L^(-1)
-            vcov = Ch.matrixL().transpose().
+            XXinv = Ch.matrixL().transpose().
                 solve(Ch.matrixL().solve(MatrixXd::Identity(nvars, nvars)));
         } else if (type == 3)
         {
 	    // Inverse based on robust Cholesky decomposition, can use solve
 	    // directly based on code in get_se()
-            vcov = ChD.solve(MatrixXd::Identity(nvars, nvars));
+            XXinv = ChD.solve(MatrixXd::Identity(nvars, nvars));
         } else if (type == 4)
         {
             if (rank == nvars)
@@ -517,7 +517,7 @@ protected:
 		// Full rank
                 // Inverse based on pivoted QR decomposition,
 		// A^(-1) = P * R^(-1) * Q^T
-                vcov = Pmat
+                XXinv = Pmat
 		    * FPQR.matrixQR().topRows(nvars).triangularView<Upper>().
 		    solve(MatrixXd::Identity(nvars, nvars))
 		    * MatrixXd(FPQR.matrixQ()).topRows(nvars).transpose();
@@ -525,15 +525,15 @@ protected:
             } else
             {
                 // Rank-deficient
-		vcov = MatrixXd::Zero(nvars, nvars);
-		vcov.topLeftCorner(rank, rank) = Rinv
+		XXinv = MatrixXd::Zero(nvars, nvars);
+		XXinv.topLeftCorner(rank, rank) = Rinv
 		    * MatrixXd(FPQR.matrixQ()).topRows(rank).transpose();
-                vcov = Pmat * vcov;
+                XXinv = Pmat * XXinv;
             }
         } else if (type == 5)
         {
 	    // Inverse based on SVD, A^(-1) = V * S^(-1) * U^T
-            vcov = bSVD.matrixV()
+            XXinv = bSVD.matrixV()
                 * MatrixXd(bSVD.singularValues().array().inverse()).asDiagonal()
                 * bSVD.matrixU();  // With ThinU don't need transpose I think
 	}

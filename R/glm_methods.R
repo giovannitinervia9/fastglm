@@ -169,7 +169,7 @@ residuals.fastglm <- function(object,
 #' @export
 vcov.fastglm <- function(object, ...)
 {
-    object$vcov
+    return(object$XXinv * object$dispersion)
 }
 
 

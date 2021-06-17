@@ -477,12 +477,16 @@ protected:
 	// Get (X^T * X)^(-1) depending on method
         if (type == 0)
         {
+	    // Partial pivoted QR decomposition doesn't decompose X^T * X, so
+	    // need to do that here
+	    PQR.compute(XtWX().selfadjointView<Lower>());
+
             if (rank == nvars)
             {
 		// Full rank
                 // Inverse based on pivoted QR decomposition,
 		// A^(-1) = P * R^(-1) * Q^T
-                XXinv = Pmat
+                XXinv = Pmat  // Should preserve pivoting from coefficients?
 		    * PQR.matrixQR().topRows(nvars).triangularView<Upper>().
 		    solve(MatrixXd::Identity(nvars, nvars))
 		    * MatrixXd(PQR.householderQ()).topRows(nvars).transpose();
@@ -496,6 +500,10 @@ protected:
             }
         } else if (type == 1)
         {
+	    // QR decomposition doesn't decompose X^T * X, so need to do that
+            // here
+	    QR.compute(XtWX().selfadjointView<Lower>());
+
 	    // Inverse based on QR decomposition, A^(-1) = R^(-1) * Q^T
 	    XXinv = QR.matrixQR().topRows(nvars).triangularView<Upper>().
 		solve(MatrixXd::Identity(nvars, nvars))
@@ -512,12 +520,16 @@ protected:
             XXinv = ChD.solve(MatrixXd::Identity(nvars, nvars));
         } else if (type == 4)
         {
+	    // Full pivoted QR decomposition doesn't decompose X^T * X, so need
+	    // to do that here
+	    FPQR.compute(XtWX().selfadjointView<Lower>());
+
             if (rank == nvars)
             {
 		// Full rank
                 // Inverse based on pivoted QR decomposition,
 		// A^(-1) = P * R^(-1) * Q^T
-                XXinv = Pmat
+                XXinv = Pmat  // Should preserve pivoting from coefficients?
 		    * FPQR.matrixQR().topRows(nvars).triangularView<Upper>().
 		    solve(MatrixXd::Identity(nvars, nvars))
 		    * MatrixXd(FPQR.matrixQ()).topRows(nvars).transpose();
@@ -532,6 +544,11 @@ protected:
             }
         } else if (type == 5)
         {
+	    // SVD doesn't decompose X^T * X, so need to do that here
+	    bSVD.compute(
+		XtWX().selfadjointView<Lower>(), ComputeThinU | ComputeThinV
+		);
+
 	    // Inverse based on SVD, A^(-1) = V * S^(-1) * U^T
             XXinv = bSVD.matrixV()
                 * MatrixXd(bSVD.singularValues().array().inverse()).asDiagonal()

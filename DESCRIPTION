@@ -18,7 +18,8 @@ License: GPL (>= 2)
 Encoding: UTF-8
 Imports: 
     Rcpp (>= 0.12.13),
-    methods
+    methods,
+    MASS
 Depends:
     bigmemory
 LinkingTo:
@@ -26,7 +27,7 @@ LinkingTo:
     RcppEigen,
     BH,
     bigmemory
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.2
 Suggests: knitr,
     markdown,
     rmarkdown,

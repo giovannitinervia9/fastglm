@@ -14,7 +14,7 @@ fastglmPure(
   etastart = NULL,
   mustart = NULL,
   method = 0L,
-  tol = 1e-07,
+  tol = 0.0000001,
   maxit = 100L
 )
 }

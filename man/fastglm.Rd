@@ -17,7 +17,7 @@ fastglm(x, ...)
   etastart = NULL,
   mustart = NULL,
   method = 0L,
-  tol = 1e-08,
+  tol = 0.00000001,
   maxit = 100L,
   ...
 )
